@@ -37,6 +37,8 @@ Use otu_labels for the text values.
 
 References:      
 Hulcr, J. et al. (2012) A Jungle in There: Bacteria in Belly Buttons are Highly Diverse, but Predictable. Retrieved from: http://robdunnlab.com/projects/belly-button-biodiversity/results-and-data/Links to an external site.  
+
+Resources used to help me write the code in app.js:  
 git.bootcampcontent.com/University-of-Adelaide    
 ChatGTP  
 github.com/JeremyTallant  
