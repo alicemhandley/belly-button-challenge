@@ -1,35 +1,33 @@
-// Fetch the JSON data and store it
-let data;
-
-const url = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json";
-
-d3.json(url).then((incomingData) => {
-    data = incomingData;
-    init();
-});
 
 function init() {
-    // Use D3 to select the dropdown menu
-    let dropdownMenu = d3.select("#selDataset");
+    // Fetch the JSON data and store it
+    const url = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json";
 
-    // Use D3 to get sample names and populate the drop-down selector
-    let names = data.names;
+    d3.json(url).then((incomingData) => {
+        let data = incomingData;
 
-    // Add samples to dropdown menu
-    names.forEach((id) => {
-        dropdownMenu.append("option")
-        .text(id)
-        .property("value",id);
+        // Use D3 to select the dropdown menu
+        let dropdownMenu = d3.select("#selDataset");
+
+        // Use D3 to get sample names and populate the drop-down selector
+        let names = data.names;
+
+        // Add samples to dropdown menu
+        names.forEach((id) => {
+            dropdownMenu.append("option")
+            .text(id)
+            .property("value",id);
+        });
+
+        // Set the first sample from the list
+        let sample_one = names[0];
+
+        // Build the initial plots
+        buildCharts(sample_one, data);
     });
-
-    // Set the first sample from the list
-    let sample_one = names[0];
-
-    // Build the initial plots
-    buildCharts(sample_one);
 };
 
-function buildCharts(id) {
+function buildCharts(id, data) {
     // Filter the data for the selected sample
     let individual = data.samples.filter(sample => sample.id === id)[0];
     let metadata = data.metadata.filter(meta => meta.id.toString() === id)[0];
@@ -47,13 +45,15 @@ function buildCharts(id) {
         type: "bar",
         orientation: "h"       
     }];
-// Create the layout for the bar chart
-let barLayout = {
-    title: 'Top 10 OTUs',
-    xaxis: { title: 'Sample Values' },
-    yaxis: { title: 'OTU IDs' }
-};
-// Plot the bar chart
+
+    // Create the layout for the bar chart
+    let barLayout = {
+        title: 'Top 10 OTUs',
+        xaxis: { title: 'Sample Values' },
+        yaxis: { title: 'OTU IDs' }
+    };
+
+    // Plot the bar chart
     Plotly.newPlot("bar", barData, barLayout);
 
     // Create the trace for the bubble chart
@@ -67,12 +67,14 @@ let barLayout = {
             color: individual.otu_ids
         }
     }];
- // Create the layout for the bubble chart
- let bubbleLayout = {
-    title: 'OTU IDs and Sample Values',
-    xaxis: { title: 'OTU IDs' },
-    yaxis: { title: 'Sample Values' }
-};
+
+    // Create the layout for the bubble chart
+    let bubbleLayout = {
+        title: 'OTU IDs and Sample Values',
+        xaxis: { title: 'OTU IDs' },
+        yaxis: { title: 'Sample Values' }
+    };
+
     // Plot the bubble chart
     Plotly.newPlot("bubble", bubbleData, bubbleLayout);
 
@@ -86,8 +88,11 @@ let barLayout = {
 
 // Function that updates dashboard when sample is changed
 function optionChanged(newSample) { 
-    // Call all functions 
-    buildCharts(newSample);
+    // Fetch the data again and call buildCharts
+    const url = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json";
+    d3.json(url).then((data) => {
+        buildCharts(newSample, data);
+    });
 };
 
 // Call the initialize function
